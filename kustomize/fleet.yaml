@@ -6,5 +6,11 @@
 namespace: online-boutique
  
 kustomize:
-  # To use a kustomization.yaml different from the one in the root folder
-  dir: "."
+  # 1. the app
+  # dir: "."
+
+  # 2. app without loadgenerator
+  # dir: "/cpmponents/without-loadgenerator"
+
+  # 3. shopping assistant
+  dir: "/cpmponents/shopping-assistant"
