@@ -7,10 +7,10 @@ namespace: online-boutique
  
 kustomize:
   # 1. the app
-  # dir: "."
+  dir: "."
 
   # 2. app without loadgenerator
   # dir: "/cpmponents/without-loadgenerator"
 
   # 3. shopping assistant
-  dir: "/cpmponents/shopping-assistant"
+  # dir: "/cpmponents/shopping-assistant"
