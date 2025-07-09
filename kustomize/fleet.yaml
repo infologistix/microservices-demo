@@ -10,7 +10,7 @@ kustomize:
   # dir: "."
 
   # 2. app without loadgenerator
-  # dir: "/cpmponents/without-loadgenerator"
+  dir: "/cpmponents/without-loadgenerator"
 
   # 3. shopping assistant
-  dir: "/cpmponents/shopping-assistant"
+  # dir: "/cpmponents/shopping-assistant"
