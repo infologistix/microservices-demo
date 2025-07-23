@@ -79,7 +79,7 @@ spec:
               - ALL
           privileged: false
           readOnlyRootFilesystem: true
-        image: us-central1-docker.pkg.dev/google-samples/microservices-demo/loadgenerator:v0.10.3
+        image: europe-west3-docker.pkg.dev/platform-app-ilx/docker-image-repository/loadgenerator
         env:
         - name: FRONTEND_ADDR
           value: "frontend:80"

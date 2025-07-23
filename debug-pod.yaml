@@ -1,0 +1,14 @@
+# debug-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: debug
+  namespace: online-boutique
+  annotations:
+    sidecar.istio.io/inject: "true"
+spec:
+  containers:
+  - name: debug
+    image: nicolaka/netshoot
+    command: ["sleep", "3600"]
+

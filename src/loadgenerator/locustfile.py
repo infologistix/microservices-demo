@@ -36,8 +36,12 @@ def index(l):
 
 def setCurrency(l):
     currencies = ['EUR', 'USD', 'JPY', 'CAD', 'GBP', 'TRY']
-    l.client.post("/setCurrency",
-        {'currency_code': random.choice(currencies)})
+    l.client.post(
+        "/setCurrency",
+        data={'currency_code': random.choice(currencies)},
+        headers={"Content-Type": "application/x-www-form-urlencoded"}
+    )
+
 
 def browseProduct(l):
     l.client.get("/product/" + random.choice(products))
@@ -48,28 +52,39 @@ def viewCart(l):
 def addToCart(l):
     product = random.choice(products)
     l.client.get("/product/" + product)
-    l.client.post("/cart", {
-        'product_id': product,
-        'quantity': random.randint(1,10)})
+    l.client.post(
+        "/cart",
+        data={
+            'product_id': product,
+            'quantity': random.randint(1, 10)
+        },
+        headers={"Content-Type": "application/x-www-form-urlencoded"}
+    )
+
     
 def empty_cart(l):
     l.client.post('/cart/empty')
 
 def checkout(l):
     addToCart(l)
-    current_year = datetime.datetime.now().year+1
-    l.client.post("/cart/checkout", {
-        'email': fake.email(),
-        'street_address': fake.street_address(),
-        'zip_code': fake.zipcode(),
-        'city': fake.city(),
-        'state': fake.state_abbr(),
-        'country': fake.country(),
-        'credit_card_number': fake.credit_card_number(card_type="visa"),
-        'credit_card_expiration_month': random.randint(1, 12),
-        'credit_card_expiration_year': random.randint(current_year, current_year + 70),
-        'credit_card_cvv': f"{random.randint(100, 999)}",
-    })
+    current_year = datetime.datetime.now().year + 1
+    l.client.post(
+        "/cart/checkout",
+        data={
+            'email': fake.email(),
+            'street_address': fake.street_address(),
+            'zip_code': fake.zipcode(),
+            'city': fake.city(),
+            'state': fake.state_abbr(),
+            'country': fake.country(),
+            'credit_card_number': fake.credit_card_number(card_type="visa"),
+            'credit_card_expiration_month': random.randint(1, 12),
+            'credit_card_expiration_year': random.randint(current_year, current_year + 5),
+            'credit_card_cvv': f"{random.randint(100, 999)}",
+        },
+        headers={"Content-Type": "application/x-www-form-urlencoded"}
+    )
+
     
 def logout(l):
     l.client.get('/logout')  
