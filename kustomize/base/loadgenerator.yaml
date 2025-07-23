@@ -68,8 +68,6 @@ spec:
               echo "Failed to reach frontend after $MAX_RETRIES attempts."
               exit 1
 
-
-
       containers:
       - name: main
         securityContext:
@@ -100,3 +98,32 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: loadgenerator
+
+---
+
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: disable-mtls-for-frontend
+  namespace: online-boutique
+spec:
+  host: frontend.online-boutique.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: DISABLE
+
+---
+
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: allow-non-mtls-frontend
+  namespace: online-boutique
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  mtls:
+    mode: PERMISSIVE
+
+
