@@ -14,7 +14,6 @@
 
 FROM --platform=$BUILDPLATFORM python:3.12.8-alpine@sha256:54bec49592c8455de8d5983d984efff76b6417a6af9b5dcc8d0237bf6ad3bd20 AS base
 
-
 FROM base AS builder
 
 RUN apk update \

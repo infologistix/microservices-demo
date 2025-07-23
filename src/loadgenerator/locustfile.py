@@ -4,60 +4,66 @@ import datetime
 from locust import FastHttpUser, TaskSet, between
 from faker import Faker
 
-fake = Faker()
+# Logging Setup
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-HEADERS = {'Content-Type': 'application/x-www-form-urlencoded'}
+fake = Faker()
 
 products = [
-    '0PUK6V6EV0',
-    '1YMWWN1N4O',
-    '2ZYFJ3GM2N',
-    '66VCHSJNUP',
-    '6E92ZMYYFZ',
-    '9SIQT8TOJO',
-    'L9ECAV7KIM',
-    'LS4PSXUNUM',
-    'OLJCESPC7Z'
+    '0PUK6V6EV0', '1YMWWN1N4O', '2ZYFJ3GM2N',
+    '66VCHSJNUP', '6E92ZMYYFZ', '9SIQT8TOJO',
+    'L9ECAV7KIM', 'LS4PSXUNUM', 'OLJCESPC7Z'
 ]
 
+headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+
 def index(l):
-    l.client.get("/")
+    with l.client.get("/", headers=headers, catch_response=True) as res:
+        if res.status_code != 200:
+            logger.warning(f"GET / failed with status {res.status_code}")
+            res.failure("Failed to load homepage")
 
 def setCurrency(l):
-    currencies = ['EUR', 'USD', 'JPY', 'CAD', 'GBP', 'TRY']
-    l.client.post("/setCurrency",
-        data={'currency_code': random.choice(currencies)},
-        headers=HEADERS)
+    currency = random.choice(['EUR', 'USD', 'JPY', 'CAD', 'GBP', 'TRY'])
+    with l.client.post("/setCurrency", {"currency_code": currency}, headers=headers, catch_response=True) as res:
+        if res.status_code != 200:
+            logger.warning(f"POST /setCurrency failed with status {res.status_code}")
+            res.failure("Failed to set currency")
 
 def browseProduct(l):
-    l.client.get("/product/" + random.choice(products))
+    product = random.choice(products)
+    with l.client.get(f"/product/{product}", headers=headers, catch_response=True) as res:
+        if res.status_code != 200:
+            logger.warning(f"GET /product/{product} failed with status {res.status_code}")
+            res.failure("Failed to load product page")
 
 def viewCart(l):
-    l.client.get("/cart")
+    with l.client.get("/cart", headers=headers, catch_response=True) as res:
+        if res.status_code != 200:
+            logger.warning(f"GET /cart failed with status {res.status_code}")
+            res.failure("Failed to view cart")
 
 def addToCart(l):
     product = random.choice(products)
-    logger.info(f"Adding product to cart: {product}")
-    l.client.get(f"/product/{product}")
-    response = l.client.post("/cart", data={
-        'product_id': product,
-        'quantity': random.randint(1, 10)
-    }, headers=HEADERS)
-    if response.status_code != 200:
-        logger.error(f"AddToCart failed: HTTP {response.status_code}, Body: {response.text}")
-    else:
-        logger.info(f"AddToCart succeeded: HTTP {response.status_code}")
+    with l.client.get(f"/product/{product}", headers=headers, catch_response=True):
+        pass  # preload product page
+    payload = {'product_id': product, 'quantity': random.randint(1, 10)}
+    with l.client.post("/cart", data=payload, headers=headers, catch_response=True) as res:
+        if res.status_code != 200:
+            logger.warning(f"POST /cart failed with status {res.status_code}, data={payload}")
+            res.failure("Failed to add to cart")
 
 def empty_cart(l):
-    l.client.post('/cart/empty', headers=HEADERS)
+    with l.client.post("/cart/empty", headers=headers, catch_response=True) as res:
+        if res.status_code != 200:
+            logger.warning(f"POST /cart/empty failed with status {res.status_code}")
+            res.failure("Failed to empty cart")
 
 def checkout(l):
-    logger.info("Starting checkout")
     addToCart(l)
     current_year = datetime.datetime.now().year + 1
-    response = l.client.post("/cart/checkout", data={
+    payload = {
         'email': fake.email(),
         'street_address': fake.street_address(),
         'zip_code': fake.zipcode(),
@@ -66,17 +72,19 @@ def checkout(l):
         'country': fake.country(),
         'credit_card_number': fake.credit_card_number(card_type="visa"),
         'credit_card_expiration_month': random.randint(1, 12),
-        'credit_card_expiration_year': random.randint(current_year, current_year + 5),
-        'credit_card_cvv': f"{random.randint(100, 999)}",
-    }, headers=HEADERS)
-    if response.status_code != 200:
-        logger.error(f"Checkout failed: HTTP {response.status_code}, Body: {response.text}")
-    else:
-        logger.info(f"Checkout succeeded: HTTP {response.status_code}")
+        'credit_card_expiration_year': random.randint(current_year, current_year + 10),
+        'credit_card_cvv': f"{random.randint(100, 999)}"
+    }
+    with l.client.post("/cart/checkout", data=payload, headers=headers, catch_response=True) as res:
+        if res.status_code != 200:
+            logger.warning(f"POST /cart/checkout failed with status {res.status_code}, payload={payload}")
+            res.failure("Checkout failed")
 
 def logout(l):
-    l.client.get('/logout')
-
+    with l.client.get("/logout", headers=headers, catch_response=True) as res:
+        if res.status_code != 200:
+            logger.warning(f"GET /logout failed with status {res.status_code}")
+            res.failure("Logout failed")
 
 class UserBehavior(TaskSet):
     def on_start(self):
