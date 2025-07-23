@@ -28,10 +28,10 @@ spec:
       labels:
         app: loadgenerator
       annotations:
-        sidecar.istio.io/inject: "false"
-        # sidecar.istio.io/rewriteAppHTTPProbers: "true"
-        # sidecar.istio.io/interceptionMode: REDIRECT
-        # traffic.sidecar.istio.io/excludeOutboundPorts: "80"
+        # sidecar.istio.io/inject: "false"
+        sidecar.istio.io/rewriteAppHTTPProbers: "true"
+        sidecar.istio.io/interceptionMode: REDIRECT
+        traffic.sidecar.istio.io/excludeOutboundPorts: "80"
     spec:
       serviceAccountName: loadgenerator
       terminationGracePeriodSeconds: 5
