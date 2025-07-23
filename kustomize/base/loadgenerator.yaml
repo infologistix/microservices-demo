@@ -80,7 +80,7 @@ spec:
               - ALL
           privileged: false
           readOnlyRootFilesystem: true
-        image: europe-west3-docker.pkg.dev/platform-app-ilx/docker-image-repository/loadgenerator:latest
+        image: europe-west3-docker.pkg.dev/platform-app-ilx/docker-image-repository/loadgenerator:v1.0.0
         imagePullPolicy: Always
         env:
         - name: FRONTEND_ADDR
