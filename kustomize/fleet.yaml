@@ -8,3 +8,4 @@ namespace: online-boutique
  
 kustomize:
   dir: "./kustomize"
+  kustomization: "./kustomize/kustomization.yaml"
