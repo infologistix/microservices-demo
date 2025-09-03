@@ -6,4 +6,4 @@
 namespace: online-boutique
  
 kustomize:
-  dir: "."
+  dir: "./kustomize"
