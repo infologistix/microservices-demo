@@ -15,4 +15,5 @@ spec:
     route:
     - destination:
         host: frontend.online-boutique.svc.cluster.local
-        port:
+        port: 
+          number: 80
